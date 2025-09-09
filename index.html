@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="A simple, mobile-friendly snooker score tracker to keep tabs on points and potted balls.">
+    <meta name="keywords" content="snooker, score tracker, billiards, game">
+    <meta name="author" content="Your Name">
+    <meta property="og:title" content="Snooker Score Tracker">
+    <meta property="og:description" content="Track snooker scores and potted balls easily with this free, mobile-friendly tool.">
+    <meta property="og:type" content="website">
+    <title>Snooker Score Tracker</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            text-align: center;
+            background-color: #1e1e1e;
+            margin: 0;
+            padding: 20px;
+            color: #e0e0e0;
+        }
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+            background: linear-gradient(135deg, #2c2c2c, #252525);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+        .players-container {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+        .player {
+            flex: 1;
+            margin: 0 5px;
+            padding: 10px;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            min-width: 150px;
+        }
+        .active-player {
+            background-color: #37474f;
+            border: 2px solid #0288d1;
+        }
+        input[type="text"] {
+            width: 100%;
+            max-width: 150px;
+            padding: 8px;
+            margin: 8px auto;
+            border: 1px solid #546e7a;
+            border-radius: 5px;
+            font-size: 14px;
+            background-color: #424242;
+            color: #e0e0e0;
+        }
+        button {
+            padding: 12px 20px;
+            margin: 6px;
+            background-color: #0288d1;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s ease;
+            touch-action: manipulation;
+        }
+        button:hover {
+            background-color: #0277bd;
+        }
+        .ball-btn, .foul-btn {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            margin: 4px;
+            color: white;
+            font-weight: bold;
+            font-size: 13px;
+            line-height: 45px;
+        }
+        .red { background-color: #d32f2f; }
+        .yellow { background-color: #fbc02d; }
+        .green { background-color: #388e3c; }
+        .brown { background-color: #6d4c41; }
+        .blue { background-color: #1976d2; }
+        .pink { background-color: #e91e63; }
+        .black { background-color: #212121; }
+        .foul-btn { background-color: #757575; }
+        .reset-btn {
+            background-color: #d32f2f;
+        }
+        .reset-btn:hover {
+            background-color: #b71c1c;
+        }
+        .undo-btn {
+            background-color: #f57c00;
+        }
+        .undo-btn:hover {
+            background-color: #ef6c00;
+        }
+        .toggle-btn {
+            background-color: #0288d1;
+        }
+        .toggle-btn:hover {
+            background-color: #0277bd;
+        }
+        h1 {
+            color: #42a5f5;
+            font-size: 28px;
+            margin-bottom: 15px;
+        }
+        .score {
+            font-size: 24px;
+            font-weight: bold;
+            margin: 10px 0;
+            color: #f06292;
+        }
+        .ball-container, .foul-container {
+            margin: 15px 0;
+            padding: 10px;
+            background: #37474f;
+            border-radius: 10px;
+        }
+        .section-label {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #b0bec5;
+        }
+        .potted-balls {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 8px;
+        }
+        .potted-ball {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            color: white;
+            font-weight: bold;
+            font-size: 12px;
+            line-height: 35px;
+            margin: 4px;
+            text-align: center;
+        }
+        @media (max-width: 600px) {
+            .player {
+                flex: 100%;
+                margin-bottom: 10px;
+            }
+            button {
+                padding: 10px 15px;
+                font-size: 13px;
+            }
+            .ball-btn, .foul-btn {
+                width: 40px;
+                height: 40px;
+                font-size: 12px;
+                line-height: 40px;
+            }
+            .potted-ball {
+                width: 30px;
+                height: 30px;
+                font-size: 11px;
+                line-height: 30px;
+            }
+            h1 {
+                font-size: 24px;
+            }
+            .score {
+                font-size: 20px;
+            }
+            .section-label {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Snooker Score Tracker</h1>
+        <div class="players-container">
+            <div class="player" id="player1">
+                <input type="text" id="player1Name" value="Player 1" oninput="updatePlayerName(1)">
+                <div class="score" id="player1Score">0</div>
+                <div class="potted-balls" id="player1PottedBalls"></div>
+            </div>
+            <div class="player" id="player2">
+                <input type="text" id="player2Name" value="Player 2" oninput="updatePlayerName(2)">
+                <div class="score" id="player2Score">0</div>
+                <div class="potted-balls" id="player2PottedBalls"></div>
+            </div>
+        </div>
+        <button class="toggle-btn" onclick="togglePlayer()">Toggle Player (Current: <span id="activePlayer">Player 1</span>)</button>
+        <div class="ball-container">
+            <div class="section-label">Add Ball Points</div>
+            <button class="ball-btn red" onclick="addBallPoints(1, 'red')">1</button>
+            <button class="ball-btn yellow" onclick="addBallPoints(2, 'yellow')">2</button>
+            <button class="ball-btn green" onclick="addBallPoints(3, 'green')">3</button>
+            <button class="ball-btn brown" onclick="addBallPoints(4, 'brown')">4</button>
+            <button class="ball-btn blue" onclick="addBallPoints(5, 'blue')">5</button>
+            <button class="ball-btn pink" onclick="addBallPoints(6, 'pink')">6</button>
+            <button class="ball-btn black" onclick="addBallPoints(7, 'black')">7</button>
+        </div>
+        <div class="foul-container">
+            <div class="section-label">Add Foul Points (to opponent)</div>
+            <button class="foul-btn" onclick="addFoulPoints(4)">4</button>
+            <button class="foul-btn" onclick="addFoulPoints(5)">5</button>
+            <button class="foul-btn" onclick="addFoulPoints(6)">6</button>
+            <button class="foul-btn" onclick="addFoulPoints(7)">7</button>
+        </div>
+        <div>
+            <button onclick="endFrame()">End Frame</button>
+            <button class="undo-btn" onclick="undoAction()">Undo</button>
+            <button class="reset-btn" onclick="resetMatch()">Reset Match</button>
+        </div>
+    </div>
+
+    <script>
+        let player1Score = 0;
+        let player2Score = 0;
+        let player1Name = 'Player 1';
+        let player2Name = 'Player 2';
+        let activePlayer = 1;
+        let player1Potted = { red: 0, yellow: 0, green: 0, brown: 0, blue: 0, pink: 0, black: 0 };
+        let player2Potted = { red: 0, yellow: 0, green: 0, brown: 0, blue: 0, pink: 0, black: 0 };
+        let actionHistory = [];
+
+        function updatePlayerName(player) {
+            const nameInput = document.getElementById(`player${player}Name`);
+            const name = nameInput.value.trim() || `Player ${player}`;
+            if (player === 1) {
+                player1Name = name;
+            } else {
+                player2Name = name;
+            }
+            if (activePlayer === player) {
+                document.getElementById('activePlayer').textContent = name;
+            }
+        }
+
+        function updatePottedBallsDisplay(player) {
+            const pottedBallsDiv = document.getElementById(`player${player}PottedBalls`);
+            const potted = player === 1 ? player1Potted : player2Potted;
+            pottedBallsDiv.innerHTML = '';
+            const colors = ['red', 'yellow', 'green', 'brown', 'blue', 'pink', 'black'];
+            colors.forEach(color => {
+                if (potted[color] > 0) {
+                    const ballDiv = document.createElement('div');
+                    ballDiv.className = `potted-ball ${color}`;
+                    ballDiv.textContent = potted[color];
+                    pottedBallsDiv.appendChild(ballDiv);
+                }
+            });
+        }
+
+        function togglePlayer() {
+            activePlayer = activePlayer === 1 ? 2 : 1;
+            document.getElementById('activePlayer').textContent = activePlayer === 1 ? player1Name : player2Name;
+            document.getElementById('player1').classList.toggle('active-player', activePlayer === 1);
+            document.getElementById('player2').classList.toggle('active-player', activePlayer === 2);
+        }
+
+        function addBallPoints(points, color) {
+            const action = { type: 'ball', player: activePlayer, points, color };
+            actionHistory.push(action);
+            if (activePlayer === 1) {
+                player1Score += points;
+                player1Potted[color]++;
+                document.getElementById('player1Score').textContent = player1Score;
+                updatePottedBallsDisplay(1);
+            } else {
+                player2Score += points;
+                player2Potted[color]++;
+                document.getElementById('player2Score').textContent = player2Score;
+                updatePottedBallsDisplay(2);
+            }
+        }
+
+        function addFoulPoints(points) {
+            const action = { type: 'foul', player: activePlayer, points };
+            actionHistory.push(action);
+            if (activePlayer === 1) {
+                player2Score += points;
+                document.getElementById('player2Score').textContent = player2Score;
+            } else {
+                player1Score += points;
+                document.getElementById('player1Score').textContent = player1Score;
+            }
+        }
+
+        function undoAction() {
+            if (actionHistory.length === 0) return;
+            const lastAction = actionHistory.pop();
+            if (lastAction.type === 'ball') {
+                const { player, points, color } = lastAction;
+                if (player === 1) {
+                    player1Score = Math.max(0, player1Score - points);
+                    player1Potted[color] = Math.max(0, player1Potted[color] - 1);
+                    document.getElementById('player1Score').textContent = player1Score;
+                    updatePottedBallsDisplay(1);
+                } else {
+                    player2Score = Math.max(0, player2Score - points);
+                    player2Potted[color] = Math.max(0, player2Potted[color] - 1);
+                    document.getElementById('player2Score').textContent = player2Score;
+                    updatePottedBallsDisplay(2);
+                }
+            } else if (lastAction.type === 'foul') {
+                const { player, points } = lastAction;
+                if (player === 1) {
+                    player2Score = Math.max(0, player2Score - points);
+                    document.getElementById('player2Score').textContent = player2Score;
+                } else {
+                    player1Score = Math.max(0, player1Score - points);
+                    document.getElementById('player1Score').textContent = player1Score;
+                }
+            }
+        }
+
+        function endFrame() {
+            player1Score = 0;
+            player2Score = 0;
+            player1Potted = { red: 0, yellow: 0, green: 0, brown: 0, blue: 0, pink: 0, black: 0 };
+            player2Potted = { red: 0, yellow: 0, green: 0, brown: 0, blue: 0, pink: 0, black: 0 };
+            actionHistory = [];
+            document.getElementById('player1Score').textContent = player1Score;
+            document.getElementById('player2Score').textContent = player2Score;
+            updatePottedBallsDisplay(1);
+            updatePottedBallsDisplay(2);
+        }
+
+        function resetMatch() {
+            player1Score = 0;
+            player2Score = 0;
+            player1Potted = { red: 0, yellow: 0, green: 0, brown: 0, blue: 0, pink: 0, black: 0 };
+            player2Potted = { red: 0, yellow: 0, green: 0, brown: 0, blue: 0, pink: 0, black: 0 };
+            player1Name = 'Player 1';
+            player2Name = 'Player 2';
+            actionHistory = [];
+            document.getElementById('player1Score').textContent = player1Score;
+            document.getElementById('player2Score').textContent = player2Score;
+            document.getElementById('player1Name').value = 'Player 1';
+            document.getElementById('player2Name').value = 'Player 2';
+            updatePottedBallsDisplay(1);
+            updatePottedBallsDisplay(2);
+            activePlayer = 1;
+            document.getElementById('activePlayer').textContent = 'Player 1';
+            document.getElementById('player1').classList.add('active-player');
+            document.getElementById('player2').classList.remove('active-player');
+        }
+
+        // Initialize active player
+        document.getElementById('player1').classList.add('active-player');
+    </script>
+</body>
+</html>
